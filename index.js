@@ -26,7 +26,7 @@ export const withSubscription = (
 ) => WrappedComponent => {
   const subscriptionName =
     typeof options.subscriptionName === "string" &&
-    options.subscriptionName !== ""
+      options.subscriptionName !== ""
       ? options.subscriptionName
       : "subscription";
   const destroyOnWilUnmount =
@@ -55,10 +55,10 @@ export const withSubscription = (
     render() {
       return (
         <WrappedComponent
-          {...this.props}
-          {...{ [subscriptionName]: subscription }}
+          { ...this.props }
+          { ...{ [subscriptionName]: subscription } }
         >
-          {this.props.children}
+          { this.props.children }
         </WrappedComponent>
       );
     }
@@ -160,20 +160,23 @@ BluetoothSerial.device = (id = null) => ({
    * @param {Function} [callback=() => {}]
    * @param {String} [delimiter=""]
    */
-  read: (callback = () => {}, delimiter = "") => {
+  read: (callback = () => { }, delimiter = "") => {
+    //console.log('Entrou aqui');
     if (typeof callback !== "function") {
       return;
     }
-
-    BluetoothSerial.withDelimiter(delimiter, id).then(deviceId => {
-      const subscription = BluetoothSerial.addListener("read", result => {
-        const { id: readDeviceId, data } = result;
-
-        if (readDeviceId === deviceId) {
-          callback(data, subscription);
-        }
-      });
+    //console.log('passou aqui');
+    //BluetoothSerial.withDelimiter(delimiter, id).then(deviceId => {
+    const subscription = BluetoothSerial.addListener("read", result => {
+      //console.log('leu isso: ', result);
+      const { id: readDeviceId, data } = result;
+      //console.log('readDeviceId: ', readDeviceId);
+      //console.log('data: ', data);
+      //if (readDeviceId === deviceId) {
+      callback(data, subscription);
+      //}
     });
+    //});
   },
 
   /**
@@ -194,7 +197,7 @@ BluetoothSerial.device = (id = null) => ({
    * @param {Number} [ms=1000]
    * @param {String} [delimiter=""]
    */
-  readEvery: (callback = () => {}, ms = 1000, delimiter = "") => {
+  readEvery: (callback = () => { }, ms = 1000, delimiter = "") => {
     if (typeof callback !== "function") {
       return;
     }
@@ -237,7 +240,7 @@ BluetoothSerial.device = (id = null) => ({
     if (typeof data === "string") {
       data = new Buffer(data);
     }
-    return BluetoothSerial.writeToDevice(data.toString("base64"), id);
+    return BluetoothSerial.writeToDevice(data.toString("ascii"), id);
   },
 
   /**
@@ -379,7 +382,7 @@ BluetoothSerial.readOnce = (delimiter = "", id = null) =>
  * @param {String} [id]
  */
 BluetoothSerial.readEvery = (
-  callback = () => {},
+  callback = () => { },
   ms = 1000,
   delimiter = "",
   id = null
@@ -410,7 +413,7 @@ BluetoothSerial.write = (data, id = null) => {
   if (typeof data === "string") {
     data = new Buffer(data);
   }
-  return BluetoothSerial.writeToDevice(data.toString("base64"), id);
+  return BluetoothSerial.writeToDevice(data.toString("ascii"), id);
 };
 
 export default BluetoothSerial;
