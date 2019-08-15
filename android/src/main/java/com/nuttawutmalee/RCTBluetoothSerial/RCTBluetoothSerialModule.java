@@ -457,8 +457,11 @@ public class RCTBluetoothSerialModule extends ReactContextBaseJavaModule
             Log.d(TAG, "Write to device id " + id + " : " + message);
 
         if (id != null) {
-            byte[] data = Base64.decode(message, Base64.DEFAULT);
-            mBluetoothService.write(id, data);
+            //byte[] data = Base64.decode(message, Base64.DEFAULT);
+            //mBluetoothService.write(id, data);
+            
+            mBluetoothService.write(id, message.getBytes());
+            //mBluetoothService.write(id, message);
         }
 
         promise.resolve(true);
@@ -664,22 +667,25 @@ public class RCTBluetoothSerialModule extends ReactContextBaseJavaModule
      * @param data Message
      */
     void onData(String id, String data) {
+        String completeData = "";
         if (mBuffers.containsKey(id)) {
             StringBuffer buffer = mBuffers.get(id);
             buffer.append(data);
             mBuffers.put(id, buffer);
         }
+        completeData = data;
+        //String delimiter = "";
 
-        String delimiter = "";
+        //if (mDelimiters.containsKey(id)) {
+        //    delimiter = mDelimiters.get(id);
+        //}
 
-        if (mDelimiters.containsKey(id)) {
-            delimiter = mDelimiters.get(id);
-        }
+        //String completeData = readUntil(id, delimiter);
 
-        String completeData = readUntil(id, delimiter);
-
-        if (completeData != null && completeData.length() > 0) {
+        //if (completeData != null && completeData.length() > 0) {
             WritableMap readParams = Arguments.createMap();
+            //Log.d(TAG, "read id: " + id);
+            //Log.d(TAG, "read id: " + completeData);
             readParams.putString("id", id);
             readParams.putString("data", completeData);
             sendEvent(DEVICE_READ, readParams);
@@ -688,7 +694,7 @@ public class RCTBluetoothSerialModule extends ReactContextBaseJavaModule
             dataParams.putString("id", id);
             dataParams.putString("data", completeData);
             sendEvent(DATA_READ, dataParams);
-        }
+        //}
     }
 
     /**
