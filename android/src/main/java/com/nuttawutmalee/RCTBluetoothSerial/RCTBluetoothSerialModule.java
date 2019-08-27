@@ -666,26 +666,23 @@ public class RCTBluetoothSerialModule extends ReactContextBaseJavaModule
      * @param id   Device address
      * @param data Message
      */
-    void onData(String id, String data) {
-        String completeData = "";
+     void onData(String id, String data) {
         if (mBuffers.containsKey(id)) {
             StringBuffer buffer = mBuffers.get(id);
             buffer.append(data);
             mBuffers.put(id, buffer);
         }
-        completeData = data;
-        //String delimiter = "";
 
-        //if (mDelimiters.containsKey(id)) {
-        //    delimiter = mDelimiters.get(id);
-        //}
+        String delimiter = "";
 
-        //String completeData = readUntil(id, delimiter);
+        if (mDelimiters.containsKey(id)) {
+            delimiter = mDelimiters.get(id);
+        }
 
-        //if (completeData != null && completeData.length() > 0) {
+        String completeData = readUntil(id, delimiter);
+
+        if (completeData != null && completeData.length() > 0) {
             WritableMap readParams = Arguments.createMap();
-            //Log.d(TAG, "read id: " + id);
-            //Log.d(TAG, "read id: " + completeData);
             readParams.putString("id", id);
             readParams.putString("data", completeData);
             sendEvent(DEVICE_READ, readParams);
@@ -694,7 +691,7 @@ public class RCTBluetoothSerialModule extends ReactContextBaseJavaModule
             dataParams.putString("id", id);
             dataParams.putString("data", completeData);
             sendEvent(DATA_READ, dataParams);
-        //}
+        }
     }
 
     /**
